@@ -27,7 +27,10 @@ class VIEW3D_MT_select_connected(Menu):
         layout.operator("mesh.select_connected_sharp", text="Sharp")
         layout.operator("mesh.select_connected_bevel", text="Bevel Weight")
         layout.operator("mesh.select_connected_seam", text="Seam")
-        layout.operator("mesh.select_connected_length", text="Length")
+        
+        # Only show Length operator in edge mode
+        if context.tool_settings.mesh_select_mode[1]:
+            layout.operator("mesh.select_connected_length", text="Length")
 
 
 def draw_select_similar_menu(self, context):

@@ -41,40 +41,42 @@ class MESH_OT_select_connected_length(Operator):
             self.report({'WARNING'}, "No edges selected")
             return {'CANCELLED'}
         
-        # If both are 0, use the first selected edge's length
-        if self.min_length == 0.0 and self.max_length == 0.0:
-            edge_length = initial_edges[0].calc_length()
-            # Use a small tolerance for floating point comparison
-            tolerance = 0.0001
-            min_val = edge_length - tolerance
-            max_val = edge_length + tolerance
-        else:
-            min_val = self.min_length
-            max_val = self.max_length
-            
-            # Validate min/max
-            if min_val > max_val:
-                self.report({'WARNING'}, "Min length cannot be greater than max length")
-                return {'CANCELLED'}
+        # Process each selected edge independently
+        all_selected_edges = set(initial_edges)
         
-        # Process selection expansion
-        edges_to_process = initial_edges.copy()
-        selected_edges = set(initial_edges)
-        
-        while edges_to_process:
-            current_edge = edges_to_process.pop(0)
+        for start_edge in initial_edges:
+            # If both are 0, use this edge's length
+            if self.min_length == 0.0 and self.max_length == 0.0:
+                edge_length = start_edge.calc_length()
+                tolerance = 0.0001
+                min_val = edge_length - tolerance
+                max_val = edge_length + tolerance
+            else:
+                min_val = self.min_length
+                max_val = self.max_length
+                
+                if min_val > max_val:
+                    continue  # Skip this edge if invalid range
             
-            # Check connected edges through vertices
-            for vert in current_edge.verts:
-                for edge in vert.link_edges:
-                    if edge not in selected_edges:
-                        edge_length = edge.calc_length()
-                        
-                        # Check if edge length is within range
-                        if min_val <= edge_length <= max_val:
-                            edge.select = True
-                            selected_edges.add(edge)
-                            edges_to_process.append(edge)
+            # Expand from this edge
+            edges_to_process = [start_edge]
+            local_selected = {start_edge}
+            
+            while edges_to_process:
+                current_edge = edges_to_process.pop(0)
+                
+                # Check connected edges through vertices
+                for vert in current_edge.verts:
+                    for edge in vert.link_edges:
+                        if edge not in local_selected:
+                            edge_length = edge.calc_length()
+                            
+                            # Check if edge length is within range
+                            if min_val <= edge_length <= max_val:
+                                edge.select = True
+                                all_selected_edges.add(edge)
+                                local_selected.add(edge)
+                                edges_to_process.append(edge)
         
         bmesh.update_edit_mesh(me)
         return {'FINISHED'}
