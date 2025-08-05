@@ -1,0 +1,15 @@
+schema_version = "1.0.0"
+id = "LostSelection"
+version = "0.1.0"
+name = "Lost Selection"
+tagline = "Set of usefull extra selection operators"
+maintainer = "ezelar.com"
+type = "add-on"
+website = "https://github.com/niewinny/lost_selection"
+
+tags = ["Modeling", "3D View", "Mesh", "Selection"]
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-2.0-or-later",
+]
