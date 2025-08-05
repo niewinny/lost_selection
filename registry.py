@@ -1,5 +1,4 @@
 from bpy.utils import register_class, unregister_class
-import bpy
 
 # Explicit imports - All modules that contain registrable classes
 from . import ops, ui, keymap
