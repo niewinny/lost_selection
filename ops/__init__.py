@@ -1,7 +1,7 @@
 # Operators module initialization
 import bpy
 
-from . import similar_display_type, similar_rotation
+from . import similar_display_type, similar_rotation, similar_modifiers
 
 
 class Theme(bpy.types.PropertyGroup):
@@ -17,4 +17,5 @@ types_classes = (
 classes = (
     *similar_display_type.classes,
     *similar_rotation.classes,
+    *similar_modifiers.classes,
 )
