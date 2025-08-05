@@ -18,7 +18,7 @@ bl_info = {
     'wiki_url': 'https://github.com/niewinny/lost_selection',
     'category': '3D View'}
 
-from . import registry, ops
+from . import registry, ops, ui, keymap
 
 
 def register():

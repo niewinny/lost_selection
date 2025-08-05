@@ -1,6 +1,8 @@
 # Operators module initialization
 import bpy
 
+from . import similar_display_type
+
 
 class Theme(bpy.types.PropertyGroup):
     """Theme settings for all operators"""
@@ -12,6 +14,6 @@ types_classes = (
 )
 
 # Collect classes from imported modules
-# Currently empty - operators will be added here
 classes = (
+    *similar_display_type.classes,
 )
