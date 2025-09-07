@@ -32,9 +32,10 @@ class MESH_OT_select_connected_bevel(Operator):
         bm = bmesh.from_edit_mesh(me)
         
         # Get bevel weight layer
-        bevel_layer = bm.edges.layers.bevel_weight.active
+        bevel_layer = bm.edges.layers.float.get("bevel_weight_edge")
         if not bevel_layer:
-            bevel_layer = bm.edges.layers.bevel_weight.new()
+            self.report({'WARNING'}, "No bevel weight data found on mesh")
+            return {'CANCELLED'}
         
         # Check if we're in face mode
         face_mode = context.tool_settings.mesh_select_mode[2]
@@ -46,13 +47,21 @@ class MESH_OT_select_connected_bevel(Operator):
                 self.report({'WARNING'}, "No faces selected")
                 return {'CANCELLED'}
             
-            # Get reference bevel value from first face's edges
-            if selected_faces:
-                ref_edge = selected_faces[0].edges[0] if selected_faces[0].edges else None
-                if ref_edge:
-                    reference_bevel = ref_edge[bevel_layer]
-                else:
-                    return {'CANCELLED'}
+            # Get reference bevel value from first selected edge that has the attribute
+            reference_bevel = None
+            for face in selected_faces:
+                for edge in face.edges:
+                    try:
+                        reference_bevel = edge[bevel_layer]
+                        break
+                    except:
+                        continue
+                if reference_bevel is not None:
+                    break
+            
+            if reference_bevel is None:
+                self.report({'WARNING'}, "Selected edges don't have bevel weight values")
+                return {'CANCELLED'}
             
             # Process each face
             faces_to_process = selected_faces.copy()
@@ -68,7 +77,12 @@ class MESH_OT_select_connected_bevel(Operator):
                             # Check if all edges of this face meet criteria
                             all_edges_match = True
                             for face_edge in face.edges:
-                                edge_bevel = face_edge[bevel_layer]
+                                # Skip edges without bevel weight attribute
+                                try:
+                                    edge_bevel = face_edge[bevel_layer]
+                                except:
+                                    all_edges_match = False
+                                    break
                                 
                                 meets_criteria = False
                                 if self.comparison == 'EQUAL':
@@ -101,10 +115,17 @@ class MESH_OT_select_connected_bevel(Operator):
                 edges_to_process = list(start_vert.link_edges)
                 local_selected = set()
                 
-                # Get reference bevel value from first edge
-                if edges_to_process:
-                    reference_bevel = edges_to_process[0][bevel_layer]
-                else:
+                # Get reference bevel value from first selected edge that has the attribute
+                reference_bevel = None
+                for edge in start_vert.link_edges:
+                    if edge.select:
+                        try:
+                            reference_bevel = edge[bevel_layer]
+                            break
+                        except:
+                            continue
+                
+                if reference_bevel is None:
                     continue
                 
                 while edges_to_process:
@@ -113,7 +134,11 @@ class MESH_OT_select_connected_bevel(Operator):
                     if current_edge in local_selected:
                         continue
                         
-                    edge_bevel = current_edge[bevel_layer]
+                    # Skip edges without bevel weight attribute
+                    try:
+                        edge_bevel = current_edge[bevel_layer]
+                    except:
+                        continue
                     
                     # Check if edge meets criteria
                     meets_criteria = False

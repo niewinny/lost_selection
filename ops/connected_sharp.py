@@ -41,13 +41,19 @@ class MESH_OT_select_connected_sharp(Operator):
                 self.report({'WARNING'}, "No faces selected")
                 return {'CANCELLED'}
             
-            # Get reference sharp value from first face's edges
-            if selected_faces:
-                ref_edge = selected_faces[0].edges[0] if selected_faces[0].edges else None
-                if ref_edge:
-                    reference_sharp = ref_edge.smooth
-                else:
-                    return {'CANCELLED'}
+            # Get reference sharp value from first selected edge
+            reference_sharp = None
+            for face in selected_faces:
+                for edge in face.edges:
+                    if edge.select or face.select:  # Check if edge is part of selected face
+                        reference_sharp = not edge.smooth
+                        break
+                if reference_sharp is not None:
+                    break
+            
+            if reference_sharp is None:
+                # Default to non-sharp if no reference found
+                reference_sharp = False
             
             # Process each face
             faces_to_process = selected_faces.copy()
@@ -63,15 +69,15 @@ class MESH_OT_select_connected_sharp(Operator):
                             # Check if all edges of this face meet criteria
                             all_edges_match = True
                             for face_edge in face.edges:
-                                edge_sharp = face_edge.smooth
+                                edge_sharp = not face_edge.smooth
                                 
                                 meets_criteria = False
                                 if self.comparison == 'EQUAL':
                                     meets_criteria = edge_sharp == reference_sharp
                                 elif self.comparison == 'TRUE':
-                                    meets_criteria = not edge_sharp  # Sharp edges have smooth=False
+                                    meets_criteria = edge_sharp  # Sharp edges have smooth=False
                                 elif self.comparison == 'FALSE':
-                                    meets_criteria = edge_sharp  # Non-sharp edges have smooth=True
+                                    meets_criteria = not edge_sharp  # Non-sharp edges have smooth=True
                                 
                                 if not meets_criteria:
                                     all_edges_match = False
@@ -96,10 +102,14 @@ class MESH_OT_select_connected_sharp(Operator):
                 edges_to_process = list(start_vert.link_edges)
                 local_selected = set()
                 
-                # Get reference sharp value from first edge
-                if edges_to_process:
-                    reference_sharp = edges_to_process[0].smooth
-                else:
+                # Get reference sharp value from first selected edge
+                reference_sharp = None
+                for edge in start_vert.link_edges:
+                    if edge.select:
+                        reference_sharp = not edge.smooth
+                        break
+                
+                if reference_sharp is None:
                     continue
                 
                 while edges_to_process:
@@ -108,16 +118,16 @@ class MESH_OT_select_connected_sharp(Operator):
                     if current_edge in local_selected:
                         continue
                         
-                    edge_sharp = current_edge.smooth
+                    edge_sharp = not current_edge.smooth
                     
                     # Check if edge meets criteria
                     meets_criteria = False
                     if self.comparison == 'EQUAL':
                         meets_criteria = edge_sharp == reference_sharp
                     elif self.comparison == 'TRUE':
-                        meets_criteria = not edge_sharp  # Sharp edges have smooth=False
+                        meets_criteria = edge_sharp  # Sharp edges have smooth=False
                     elif self.comparison == 'FALSE':
-                        meets_criteria = edge_sharp  # Non-sharp edges have smooth=True
+                        meets_criteria = not edge_sharp  # Non-sharp edges have smooth=True
                     
                     if meets_criteria:
                         current_edge.select = True
