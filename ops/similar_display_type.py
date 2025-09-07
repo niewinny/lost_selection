@@ -15,6 +15,12 @@ class OBJECT_OT_select_similar_display_type(Operator):
         default=False
     )
     
+    same_type: BoolProperty(
+        name="Same Type",
+        description="Only select objects of the same type",
+        default=True
+    )
+    
     @classmethod
     def poll(cls, context):
         return context.mode == 'OBJECT' and context.active_object is not None
@@ -27,9 +33,14 @@ class OBJECT_OT_select_similar_display_type(Operator):
             return {'CANCELLED'}
         
         active_display_type = active_obj.display_type
+        active_obj_type = active_obj.type if self.same_type else None
 
         for obj in context.visible_objects:
-            if obj.display_type == active_display_type:
+            # Check if object matches criteria
+            matches_display = obj.display_type == active_display_type
+            matches_type = not self.same_type or obj.type == active_obj_type
+            
+            if matches_display and matches_type:
                 obj.select_set(True)
             elif not self.extend:
                 obj.select_set(False)
