@@ -1,13 +1,13 @@
 schema_version = "1.0.0"
 id = "LostSelection"
-version = "0.1.0"
+version = "0.1.1"
 name = "Lost Selection"
 tagline = "Set of usefull extra selection operators"
 maintainer = "ezelar.com"
 type = "add-on"
 website = "https://github.com/niewinny/lost_selection"
 
-tags = ["Object", "3D View", "Mesh"]
+tags = ["Object", "Mesh"]
 blender_version_min = "4.2.0"
 
 license = [
