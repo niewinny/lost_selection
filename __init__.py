@@ -12,7 +12,7 @@ bl_info = {
     'name': "Lost Selection",
     'description': "Set of usefull extra selection operators",
     'author': "ezelar.com",
-    'version': (0, 1, 2),
+    'version': (0, 2, 0),
     'blender': (4, 2, 0),
     'location': 'View3D > Context Menu',
     'wiki_url': 'https://github.com/niewinny/lost_selection',

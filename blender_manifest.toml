@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "LostSelection"
-version = "0.1.2"
+version = "0.2.0"
 name = "Lost Selection"
 tagline = "Set of usefull extra selection operators"
 maintainer = "ezelar.com"
