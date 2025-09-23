@@ -10,6 +10,8 @@ class VIEW3D_MT_select_similar(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator("object.select_similar_display_type", text="Display Type")
+        layout.operator("object.select_similar_material", text="Material")
+        layout.operator("object.select_similar_color", text="Color")
         layout.operator("object.select_similar_rotation", text="Rotation")
         # Use operator_context to ensure invoke is called
         layout.operator_context = 'INVOKE_DEFAULT'
