@@ -8,7 +8,7 @@ def register():
     """Register keymaps for the addon"""
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
-    
+
     if kc:
         # Object Mode keymap for Select Similar menu
         km = kc.keymaps.new(name='Object Mode', space_type='EMPTY')

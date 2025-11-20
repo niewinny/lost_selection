@@ -1,6 +1,6 @@
 import bpy
-from bpy.types import Operator
 from bpy.props import BoolProperty, FloatProperty
+from bpy.types import Operator
 
 
 class OBJECT_OT_select_similar_color(Operator):

@@ -1,0 +1,49 @@
+[tool.ruff]
+# Set line length to match common Python style
+line-length = 88
+
+# Target Python 3.11+ (Blender 4.0+)
+target-version = "py311"
+
+# Exclude common directories
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "*.pyc",
+]
+
+[tool.ruff.lint]
+# Enable recommended rules
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+]
+
+# Ignore specific rules common in Blender addons
+ignore = [
+    "E402",  # Module level import not at top (common in Blender for bl_info)
+    "F401",  # Imported but unused (common for __init__.py exports)
+    "N801",  # Class names like MESH_OT_* are Blender conventions
+    "E722",  # Bare except sometimes needed in Blender contexts
+    "E501",  # Line too long (relaxed for Blender code)
+    "B905",  # zip() without strict= (for compatibility)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "E402"]  # Allow imports and re-exports in __init__
+"ops/__init__.py" = ["F401"]
+"ui/__init__.py" = ["F401"]
+
+[tool.ruff.format]
+# Use double quotes by default
+quote-style = "double"
+
+# Indent with spaces
+indent-style = "space"

@@ -1,18 +1,17 @@
 # Operators module initialization
 
 from . import (
+    connected_bevel,
+    connected_crease,
+    connected_length,
+    connected_seam,
+    connected_sharp,
+    similar_color,
     similar_display_type,
     similar_material,
-    similar_color,
-    similar_rotation,
     similar_modifiers,
-    connected_crease,
-    connected_sharp,
-    connected_bevel,
-    connected_seam,
-    connected_length,
+    similar_rotation,
 )
-
 
 # Collect classes from imported modules
 classes = (
